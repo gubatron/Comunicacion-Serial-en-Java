@@ -1,21 +1,29 @@
 package com.votaguz.modelo;
 
+import gnu.io.CommPort;
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.UnsupportedCommOperationException;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Scanner;
 
-import gnu.io.*;
-
 public class ComunicacionSerial {
 	
 	public static void main(String[] args){
-		
+		try {
+			getPuertoSerial();
+		} catch (PortInUseException e) {
+			e.printStackTrace();
+		}
 	}
 
 	//Metodo que va a devolver un Objeto SerialPort que este disponible
+	@SuppressWarnings("unchecked")
 	public static SerialPort getPuertoSerial() throws PortInUseException{
 		
 		String miPuerto = "/dev/tty.usbserial";
@@ -24,10 +32,12 @@ public class ComunicacionSerial {
 		SerialPort puertoDisponible = null;
 		boolean puertoEncontrado = false;
 		
-		Enumeration listaDePuertos = CommPortIdentifier.getPortIdentifiers();
+		Enumeration<CommPortIdentifier> identificadores = CommPortIdentifier.getPortIdentifiers();
 		
-		while(listaDePuertos.hasMoreElements()){
-			identificadorDePuerto = (CommPortIdentifier) listaDePuertos.nextElement();
+		while(identificadores.hasMoreElements()){
+			identificadorDePuerto = (CommPortIdentifier) identificadores.nextElement();
+			
+			System.out.println("Found: " + identificadorDePuerto.getName() + " - Type: "+identificadorDePuerto.getPortType() + " owned by " + identificadorDePuerto.getCurrentOwner());
 			
 			if(identificadorDePuerto.getPortType() == CommPortIdentifier.PORT_SERIAL){ 
 				if(identificadorDePuerto.getName().equals(miPuerto)){
