@@ -1,6 +1,6 @@
-package com.votaguz.decodificadores;
+package com.votaguz.codecs;
 
-public class LectorDe7Bits {
+public class Decodificador7Bits {
    
     /** Asi puedes utilizar esta clase con un mapa, con un arreglo o lo que quieras, simplemente utilizas
      * una implementacion de LectorDeTabla
@@ -92,7 +92,7 @@ public class LectorDe7Bits {
        
         return result.toString();
     }
-   
+   /**
     public static void main(String [] args) {
         //Ejemplo leyendo de una tabla de caracteres almacenada en un sencillo arreglo de Character
         final Character[] tablaGSM = new Character[128];
@@ -122,6 +122,7 @@ public class LectorDe7Bits {
             }
 
         });
-        System.out.println(decodeByteArray);
+        //System.out.println(decodeByteArray);
     }
+    */
 }
