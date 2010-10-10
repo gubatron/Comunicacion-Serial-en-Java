@@ -119,7 +119,6 @@ public class Codificador7Bits implements Codificador {
 			 * Muevo hacia la derecha el proximo bit para tener espacio libre en
 			 * los bits izquierdos cuando hagamos la siguiente iteracion.
 			 */
-			if (numAcarreo < 6)
 			input[i + 1] = (byte) ((proximo & 0xFF) >> (numAcarreo));
 
 			// Concatenamos el byte normalizado a 8bits en su representacion
