@@ -84,7 +84,7 @@ public class Codificador7Bits implements Codificador {
 
 		/** cantidad de bits de acarreo */
 		byte numAcarreo = 1;
-
+		
 		/** donde almacenamos los bits de acarreo */
 		byte acarreo = 0;
 
@@ -134,9 +134,13 @@ public class Codificador7Bits implements Codificador {
 			System.out.println("HEX> " + actual + " " + hex + " numAcarreo = "
 					+ numAcarreo);
 
-			// no puedo acarrear mas de 7 bits
+			/** No puedo acarrear mas de 7 bits
+			 *   y acabo de mover todos los bits del siguiente.
+			 *   El siguiente es vacio asi que salto al proximo.
+			 */
 			if (++numAcarreo > 7) {
 				numAcarreo = 1;
+				i++;
 			}
 
 			resultBuilder.append(hex);
