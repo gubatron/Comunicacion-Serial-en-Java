@@ -8,7 +8,7 @@ public class Codificador7Bits implements Codificador {
 	public static void main(String[] args) {
 		pruebaCINTEL_RQD_07();
 	}
-	
+
 	public static void pruebaCINTEL_RQD_07() {
 		/**
 		 * Prueba con ejemplo de la lamina 85 de
@@ -16,21 +16,31 @@ public class Codificador7Bits implements Codificador {
 		 */
 		Codificador7Bits encoder = new Codificador7Bits();
 		String entrada = "CINTEL RQD 07";
-		byte[] resultado = encoder.codificar(entrada);
+		byte[] resultado7bits = encoder.codificar(entrada);
 		byte b;
 
 		int length = entrada.length();
 		for (int i = 0; i < length; i++) {
-			b = resultado[i];
+			b = resultado7bits[i];
 			System.out.println(entrada.charAt(i) + " " + b + " "
 					+ Integer.toString(b, 2));
 		}
+
+		System.out.println("["
+				+ encoder.normalizacionHexadecimal(resultado7bits)
+						.toUpperCase() + "]");
+		System.out.println("[C3A4935A6482A45122087603]");
+		// System.out.println("[D16A11040D4E83206A11044D0E83A0221334AC329F]");
 	}
 
 	public static final Map<String, Byte> ALPHABET_7BITS = new HashMap<String, Byte>();
 
+	/**
+	 * Toma un string y utiliza la tabla de simbolos para crear un arreglo de
+	 * bytes codificados en 7 bits.
+	 */
 	public byte[] codificar(String input) {
-		byte[] encodedUserDataBytes = new byte[160];
+		byte[] encodedUserDataBytes = new byte[input.length() + 1];
 
 		int len = input.length();
 
@@ -45,9 +55,95 @@ public class Codificador7Bits implements Codificador {
 			}
 		}
 
-		// 2. Aplicamos algoritmo de normalizacion a 8 bits en Hexadecimal
+		// agrego 00 hexa al final.
+		encodedUserDataBytes[input.length()] = 0;
 
 		return encodedUserDataBytes;
+	}
+
+	/**
+	 * Toma un arreglo de bytes codificados en 7 bits y aplica el algoritmo de
+	 * normalizacion a 8 bits y esos bytes son representados en un String
+	 * formado por Hexadecimales.
+	 * 
+	 * @param input
+	 *            -
+	 * @return
+	 */
+	public String normalizacionHexadecimal(byte[] input) {
+		/*
+		 * 7 bits [1000011,1001001,1010100,1010100,1000101,1001100, 0100000,
+		 * 1010010, 1010001,0100000,0110000,0110111,0000000 1000011,
+		 */
+
+		/**
+		 * Para construir el String de resultado un caracter a la vez sin crear
+		 * instancias de String por cada iteracion.
+		 */
+		StringBuilder resultBuilder = new StringBuilder();
+
+		/** cantidad de bits de acarreo */
+		byte numAcarreo = 1;
+
+		/** donde almacenamos los bits de acarreo */
+		byte acarreo = 0;
+
+		/** byte procesado actualmente */
+		byte actual = 0;
+
+		/** el siguiente byte de donde tomamos los bits de acarreo */
+		byte proximo = 0;
+
+		for (int i = 0; i < input.length; i++) {
+			actual = (byte) (input[i] & 0xFF);
+
+			// Si aun tenemos un byte mas de donde tomar prestado.
+			if (i < input.length - 1) {
+				proximo = input[i + 1];
+			} else {
+				// resultBuilder.append("000000000");
+				break;
+			}
+
+			/**
+			 * Agarro los bits de mas a la derecha del siguiente byte.
+			 * 
+			 * Esto lo hago con una potencia de 2 menos 1, El exponente es
+			 * precisamente el numero de bits a tomar del proximo byte.
+			 * */
+			acarreo = (byte) (proximo & ((1 << numAcarreo) - 1));
+
+			/** Pego los bits de acarreo, al lado izquierdo del byte actual. */
+			actual = (byte) (actual | (acarreo << (8 - numAcarreo)));
+
+			/**
+			 * Muevo hacia la derecha el proximo bit para tener espacio libre en
+			 * los bits izquierdos cuando hagamos la siguiente iteracion.
+			 */
+			input[i + 1] = (byte) ((proximo & 0xFF) >> (numAcarreo));
+
+			// Concatenamos el byte normalizado a 8bits en su representacion
+			// hexadecimal
+			// asegurandonos que sea un par de caracteres hexadecimales.
+			String hex = Integer.toHexString(actual);
+			if (hex.length() >= 2) {
+				hex = hex.substring(hex.length() - 2);
+			} else if (hex.length() == 1) {
+				hex = "0" + hex;
+			}
+
+			System.out.println("HEX> " + actual + " " + hex + " numAcarreo = "
+					+ numAcarreo);
+
+			// no puedo acarrear mas de 7 bits
+			if (++numAcarreo > 7) {
+				numAcarreo = 1;
+			}
+
+			resultBuilder.append(hex);
+		}
+
+		return resultBuilder.toString();
 	}
 
 	static {
