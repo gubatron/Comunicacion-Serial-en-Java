@@ -20,12 +20,14 @@ public class Codificador7Bits implements Codificador {
 		byte b;
 
 		int length = entrada.length();
+		System.out.println("\nResultado 1ra Fase -> Conversion a Tabla 7-bit:");
 		for (int i = 0; i < length; i++) {
 			b = resultado7bits[i];
 			System.out.println(entrada.charAt(i) + " " + b + " "
 					+ Integer.toString(b, 2));
 		}
 
+		System.out.println("\n\nResultado 2da Fase -> Conversion a 8-bit hex:");
 		System.out.println("["
 				+ encoder.normalizacionHexadecimal(resultado7bits)
 						.toUpperCase() + "]");
