@@ -104,10 +104,11 @@ public class ComunicacionSerial {
 	// [Detect and Return all ports Available]
 	@SuppressWarnings("unchecked")
 	public static CommPort getSerialPort() throws PortInUseException {
-		
+
 		String os_name = System.getProperty("os.name").toLowerCase();
-		String expectedPortAddress = EXPECTED_PORT_ADDRESSES_FOR_OS.get(os_name);
-		
+		String expectedPortAddress = EXPECTED_PORT_ADDRESSES_FOR_OS
+				.get(os_name);
+
 		CommPortIdentifier portIdentifier;
 		CommPort commPort = null;
 
@@ -116,7 +117,6 @@ public class ComunicacionSerial {
 
 		while (identifiers.hasMoreElements()) {
 			portIdentifier = (CommPortIdentifier) identifiers.nextElement();
-
 
 			if (portIdentifier.getPortType() == CommPortIdentifier.PORT_SERIAL) {
 
@@ -158,8 +158,8 @@ public class ComunicacionSerial {
 	 */
 
 	/**
-	 * Read everything that is coming from the serial port. 
-	 * Needs a Port for get the inputStream.
+	 * Read everything that is coming from the serial port. Needs a Port for get
+	 * the inputStream.
 	 * 
 	 * @param port
 	 *            - A port obtained from getSerialPort() Method
@@ -167,8 +167,8 @@ public class ComunicacionSerial {
 	 */
 	public static void readFromPort(CommPort port) throws IOException {
 		InputStream portInput = port.getInputStream();
-		byte[] b = new byte[1024]; //so you can read up to 1k
-		int readBytes = 0; //how many bytes we have read.
+		byte[] b = new byte[1024]; // so you can read up to 1k
+		int readBytes = 0; // how many bytes we have read.
 		while (portInput.read() != -1) {
 			readBytes = portInput.read(b);
 			System.out.println(new String(b, 0, readBytes));
@@ -176,8 +176,8 @@ public class ComunicacionSerial {
 	}
 
 	/**
-	 * Write everything that's coming from the System.in (CONSOLE) 
-	 * Needs a Port for get the OutputStrem for sent the data.
+	 * Write everything that's coming from the System.in (CONSOLE) Needs a Port
+	 * for get the OutputStrem for sent the data.
 	 * 
 	 * @param port
 	 *            - A port obtained from getSerialPort() Method
@@ -194,8 +194,9 @@ public class ComunicacionSerial {
 	}
 
 	/**
-	 * Reads from the input stream, and writes to the output stream of the given port.
-	 * Whatever is written is also printed on stdout.
+	 * Reads from the input stream, and writes to the output stream of the given
+	 * port. Whatever is written is also printed on stdout.
+	 * 
 	 * @param inputStream
 	 * @param prompt
 	 * @param port
@@ -205,12 +206,15 @@ public class ComunicacionSerial {
 		Scanner consoleScanner = new Scanner(inputStream);
 
 		PrintStream printStream = null;
-		if (port != null)
+		
+		//if I'm given a port, I will use this printStream to write to it.
+		if (port != null) {
 			try {
 				printStream = new PrintStream(port.getOutputStream());
 			} catch (IOException e) {
 
 			}
+		}
 
 		while (consoleScanner.hasNextLine()) {
 			String nextLine = consoleScanner.nextLine();
@@ -224,11 +228,11 @@ public class ComunicacionSerial {
 			}
 			System.out.println(prompt + " " + nextLine);
 
+			//if you can write to the port, do so.
 			if (printStream != null) {
 				printStream.print(nextLine);
 			}
 
-			
 		}
 	}
 
@@ -251,7 +255,7 @@ public class ComunicacionSerial {
 	public static void readAndPrintFromSerialPortInputStream(CommPort port) {
 		try {
 			readAndPrintFromStream(port.getInputStream(), "<<", null);
-			port.close();
+			port.close(); //not sure if we should close this right away...
 		} catch (IOException e) {
 			port.close();
 		}
