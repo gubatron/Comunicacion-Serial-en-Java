@@ -47,7 +47,7 @@ public class ComunicacionSerial {
 
 		// Mac PORT SERIAL Name
 		EXPECTED_PORT_ADDRESSES_FOR_OS = new HashMap<String, String>();
-		EXPECTED_PORT_ADDRESSES_FOR_OS.put("mac os x", "/dev/tty.usbserial");
+		EXPECTED_PORT_ADDRESSES_FOR_OS.put("mac os x", "/dev/ttys002");
 
 		// Windows PORT SERIAL Name
 		// OS_PORT_NAME.put("Windows", "COM1");
@@ -71,13 +71,13 @@ public class ComunicacionSerial {
 			// Hilo que lee de la consola y manda por el puerto
 			THREAD_POOL.execute(new NamedRunnableImpl("Consola") {
 				public void run() {
-					// readAndPrintFromLocalConsole(serialPort,">>");
-					try {
-						writeOnPort(serialPort);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					readAndPrintFromLocalConsole(serialPort,">>");
+//					try {
+//						writeOnPort(serialPort);
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 				}
 			});
 
